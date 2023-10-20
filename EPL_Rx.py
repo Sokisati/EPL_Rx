@@ -19,13 +19,13 @@ worksheet.write('E1', 'Yukseklik')
 worksheet.write('F1', 'Inis hizi')
 worksheet.write('G1', 'Sicaklik')
 worksheet.write('H1', 'Pil gerilimi')
-worksheet.write('H1', 'GPS Lat.')
-worksheet.write('I1', 'GPS Long.')
-worksheet.write('J1', 'GPS Alt.')
-worksheet.write('K1', 'Pitch')
-worksheet.write('L1', 'Roll')
-worksheet.write('M1', 'Yaw')
-worksheet.write('N1', 'Donus hizi')
+worksheet.write('I1', 'GPS Lat.')
+worksheet.write('J1', 'GPS Long.')
+worksheet.write('K1', 'GPS Alt.')
+worksheet.write('L1', 'Pitch')
+worksheet.write('M1', 'Roll')
+worksheet.write('N1', 'Yaw')
+worksheet.write('O1', 'Donus hizi')
 
 class GonderilecekVeriler:
     def __init__(self, takimNo, veriPaketNo, gondermeSaatiVeTarih,basinc,yukseklik, inisHizi, sicaklik, pilGerilimi, gpsLat, gpsLong, gpsAlt, pitch, roll, yaw, donusHizi):
@@ -66,7 +66,7 @@ try:
 
         print(f"Alinan veri no:: {alinan_veri.veriPaketNo}")
         print(f"Sicaklik: {alinan_veri.sicaklik}")
-        print(f"Basinc: {alinan_veri.basinc}")
+        print(f"pil gerilimi: {alinan_veri.pilGerilimi}")
         print()
         columnString = str(alinan_veri.veriPaketNo + 2)
         worksheet.write('A'+columnString, str(alinan_veri.takimNo))
@@ -91,5 +91,3 @@ except KeyboardInterrupt:
     print("Kesildi.")
     connection.close()
     workbook.close()
-
-
