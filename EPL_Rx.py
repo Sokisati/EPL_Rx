@@ -1,34 +1,22 @@
-# -- coding: utf-8 --
-
 import socket
 import json
 import time
-import xlsxwriter
+import xlwings as xw
 import os
+from datetime import datetime
 
-desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-excel_file_path = os.path.join(desktop_path, "alinanVeriler.xlsx")
+wb = xw.Book(r'C:\Users\yagiz\OneDrive\Desktop\alinanVeriler.xlsx')
+sheet = wb.sheets['Sheet1']
 
-workbook = xlsxwriter.Workbook(excel_file_path)
-worksheet = workbook.add_worksheet()
-worksheet.write('A1', 'Takim No')
-worksheet.write('B1', 'Veri paket no')
-worksheet.write('C1', 'Gonderme tarih/saat')
-worksheet.write('D1', 'Basinc')
-worksheet.write('E1', 'Yukseklik')
-worksheet.write('F1', 'Inis hizi')
-worksheet.write('G1', 'Sicaklik')
-worksheet.write('H1', 'Pil gerilimi')
-worksheet.write('I1', 'GPS Lat.')
-worksheet.write('J1', 'GPS Long.')
-worksheet.write('K1', 'GPS Alt.')
-worksheet.write('L1', 'Pitch')
-worksheet.write('M1', 'Roll')
-worksheet.write('N1', 'Yaw')
-worksheet.write('O1', 'Donus hizi')
+header_data = [
+    'takimNo', 'veriPaketNo', 'gondermeSaatiVeTarih', 'basinc', 'yukseklik', 'inisHizi', 'sicaklik',
+    'pilGerilimi', 'gpsLat', 'gpsLong', 'gpsAlt', 'pitch', 'roll', 'yaw', 'donusHizi'
+]
+
+sheet.range('A1').value = header_data
 
 class GonderilecekVeriler:
-    def __init__(self, takimNo, veriPaketNo, gondermeSaatiVeTarih,basinc,yukseklik, inisHizi, sicaklik, pilGerilimi, gpsLat, gpsLong, gpsAlt, pitch, roll, yaw, donusHizi):
+    def __init__(self, takimNo, veriPaketNo, gondermeSaatiVeTarih, basinc, yukseklik, inisHizi, sicaklik, pilGerilimi, gpsLat, gpsLong, gpsAlt, pitch, roll, yaw, donusHizi):
         self.takimNo = takimNo
         self.veriPaketNo = veriPaketNo
         self.gondermeSaatiVeTarih = gondermeSaatiVeTarih
@@ -64,30 +52,30 @@ try:
         data_dict = json.loads(data_json)
         alinan_veri = GonderilecekVeriler(**data_dict)
 
-        print(f"Alinan veri no:: {alinan_veri.veriPaketNo}")
+        last_row = sheet.range('A' + str(sheet.cells.last_cell.row)).end('up').row + 1
+        
+        formatted_date = datetime.strptime(alinan_veri.gondermeSaatiVeTarih, '%Y-%m-%d %H:%M:%S')
+        
+        formatted_date_str = formatted_date.strftime('%Y-%m-%d %H:%M:%S')
+
+        
+        row_data = [
+            alinan_veri.takimNo, alinan_veri.veriPaketNo, formatted_date, alinan_veri.basinc,
+            alinan_veri.yukseklik, alinan_veri.inisHizi, alinan_veri.sicaklik, alinan_veri.pilGerilimi,
+            alinan_veri.gpsLat, alinan_veri.gpsLong, alinan_veri.gpsAlt, alinan_veri.pitch, alinan_veri.roll,
+            alinan_veri.yaw, alinan_veri.donusHizi
+        ]
+
+        sheet.range('A' + str(last_row)).value = row_data
+
+        print(f"Alinan veri no: {alinan_veri.veriPaketNo}")
         print(f"Sicaklik: {alinan_veri.sicaklik}")
-        print(f"pil gerilimi: {alinan_veri.pilGerilimi}")
+        print(f"Pil Gerilimi: {alinan_veri.pilGerilimi}")
         print()
-        columnString = str(alinan_veri.veriPaketNo + 2)
-        worksheet.write('A'+columnString, str(alinan_veri.takimNo))
-        worksheet.write('B'+columnString, alinan_veri.veriPaketNo)
-        worksheet.write('C'+columnString, alinan_veri.gondermeSaatiVeTarih)
-        worksheet.write('D'+columnString, alinan_veri.basinc)
-        worksheet.write('E'+columnString, alinan_veri.yukseklik)
-        worksheet.write('F'+columnString, alinan_veri.inisHizi)
-        worksheet.write('G'+columnString, alinan_veri.sicaklik)
-        worksheet.write('H'+columnString, alinan_veri.pilGerilimi)
-        worksheet.write('I'+columnString, alinan_veri.gpsLat)
-        worksheet.write('J'+columnString, alinan_veri.gpsLong)
-        worksheet.write('K'+columnString, alinan_veri.gpsAlt)
-        worksheet.write('L'+columnString, alinan_veri.pitch)
-        worksheet.write('M'+columnString, alinan_veri.roll)
-        worksheet.write('N'+columnString, alinan_veri.yaw)
-        worksheet.write('O'+columnString, alinan_veri.donusHizi)
+
         time.sleep(1)
 
-#CTRL+C
+# CTRL+C
 except KeyboardInterrupt:
     print("Kesildi.")
     connection.close()
-    workbook.close()
