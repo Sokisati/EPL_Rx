@@ -1,3 +1,5 @@
+# -- coding: utf-8 --
+
 import socket
 import json
 import time
@@ -5,11 +7,11 @@ import xlwings as xw
 import os
 from datetime import datetime
 
-wb = xw.Book(r'C:\Users\yagiz\OneDrive\Desktop\alinanVeriler.xlsx')
+wb = xw.Book(r'C:\EPL_Rx\Yer_Istasyonu_veri.xlsx')
 sheet = wb.sheets['Sheet1']
 
 header_data = [
-    'takimNo', 'veriPaketNo', 'gondermeSaatiVeTarih', 'basinc', 'yukseklik', 'inisHizi', 'sicaklik',
+    'takimNo', 'Veri paket No', 'Time', 'Pressure', 'High', 'Speed', 'Temperature',
     'pilGerilimi', 'gpsLat', 'gpsLong', 'gpsAlt', 'pitch', 'roll', 'yaw', 'donusHizi'
 ]
 
@@ -45,6 +47,8 @@ print("baglanti bekleniyor...")
 
 connection, address = sock.accept()
 print(f"baglanti adresi: {address}")
+
+
 
 try:
     while True:
