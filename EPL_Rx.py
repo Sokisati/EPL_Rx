@@ -77,7 +77,7 @@ try:
         print(f"Pil Gerilimi: {alinan_veri.pilGerilimi}")
         print()
 
-        time.sleep(1)
+        time.sleep(0.95)
 
 # CTRL+C
 except KeyboardInterrupt:
