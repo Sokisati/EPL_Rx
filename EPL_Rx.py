@@ -5,6 +5,7 @@ import json
 import time
 import xlwings as xw
 import os
+import numpy as np
 from datetime import datetime
 
 wb = xw.Book(r'C:\EPL_Rx\Yer_Istasyonu_veri.xlsx')
@@ -16,6 +17,13 @@ header_data = [
 ]
 
 sheet.range('A1').value = header_data
+
+def decryption_function(key_vector, value_to_dec, data_packet_id):
+    key_index = data_packet_id % len(key_vector)
+    dec_value = (value_to_dec + key_vector[key_index]) / key_vector[key_index]
+    return dec_value
+
+key_vector = [16,81,33,32,5,15,13,71,43,8,31,72,4,38,71,19]
 
 class GonderilecekVeriler:
     def __init__(self, takimNo, veriPaketNo, gondermeSaatiVeTarih, basinc, yukseklik, inisHizi, sicaklik, pilGerilimi, gpsLat, gpsLong, gpsAlt, pitch, roll, yaw, donusHizi):
@@ -62,7 +70,17 @@ try:
         
         formatted_date_str = formatted_date.strftime('%Y-%m-%d %H:%M:%S')
 
-        
+
+        alinan_veri.basinc = decryption_function(key_vector,alinan_veri.basinc,alinan_veri.veriPaketNo)
+        alinan_veri.yukseklik = decryption_function(key_vector,alinan_veri.yukseklik,alinan_veri.veriPaketNo)
+        alinan_veri.inisHizi = decryption_function(key_vector,alinan_veri.inisHizi,alinan_veri.veriPaketNo)
+        alinan_veri.sicaklik = decryption_function(key_vector,alinan_veri.sicaklik,alinan_veri.veriPaketNo)
+        alinan_veri.pilGerilimi = decryption_function(key_vector,alinan_veri.pilGerilimi,alinan_veri.veriPaketNo)
+        alinan_veri.gpsLat = decryption_function(key_vector,alinan_veri.gpsLat,alinan_veri.veriPaketNo)
+        alinan_veri.gpsLong = decryption_function(key_vector,alinan_veri.gpsLong,alinan_veri.veriPaketNo)
+        alinan_veri.gpsAlt = decryption_function(key_vector,alinan_veri.gpsAlt,alinan_veri.veriPaketNo)
+       
+
         row_data = [
             alinan_veri.takimNo, alinan_veri.veriPaketNo, formatted_date, alinan_veri.basinc,
             alinan_veri.yukseklik, alinan_veri.inisHizi, alinan_veri.sicaklik, alinan_veri.pilGerilimi,
