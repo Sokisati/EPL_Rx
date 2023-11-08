@@ -61,15 +61,15 @@ print(f"baglanti adresi: {address}")
 try:
     while True:
         data_json = connection.recv(1024).decode()
-        data_dict = json.loads(data_json)
-        alinan_veri = GonderilecekVeriler(**data_dict)
+        try:
+            data_dict = json.loads(data_json)
+            alinan_veri = GonderilecekVeriler(**data_dict)
+        except json.decoder.JSONDecodeError as e:
+            print(f"JSON hatasi: {e}")
+            continue 
 
         last_row = sheet.range('A' + str(sheet.cells.last_cell.row)).end('up').row + 1
         
-        formatted_date = datetime.strptime(alinan_veri.gondermeSaatiVeTarih, '%Y-%m-%d %H:%M:%S')
-        
-        formatted_date_str = formatted_date.strftime('%Y-%m-%d %H:%M:%S')
-
 
         alinan_veri.basinc = decryption_function(key_vector,alinan_veri.basinc,alinan_veri.veriPaketNo)
         alinan_veri.yukseklik = decryption_function(key_vector,alinan_veri.yukseklik,alinan_veri.veriPaketNo)
@@ -82,7 +82,7 @@ try:
        
 
         row_data = [
-            alinan_veri.takimNo, alinan_veri.veriPaketNo, formatted_date, alinan_veri.basinc,
+            alinan_veri.takimNo, alinan_veri.veriPaketNo, alinan_veri.gondermeSaatiVeTarih, alinan_veri.basinc,
             alinan_veri.yukseklik, alinan_veri.inisHizi, alinan_veri.sicaklik, alinan_veri.pilGerilimi,
             alinan_veri.gpsLat, alinan_veri.gpsLong, alinan_veri.gpsAlt, alinan_veri.pitch, alinan_veri.roll,
             alinan_veri.yaw, alinan_veri.donusHizi
@@ -95,7 +95,7 @@ try:
         print(f"Pil Gerilimi: {alinan_veri.pilGerilimi}")
         print()
 
-        time.sleep(0.95)
+        time.sleep(0.05)
 
 # CTRL+C
 except KeyboardInterrupt:
